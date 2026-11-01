@@ -7,7 +7,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - run: unzip -q DelAnholComandas-etapa3.zip
+      - run: unzip -q DelAnholComandas-V4.zip
       - uses: actions/setup-java@v4
         with: { distribution: temurin, java-version: 17 }
       - name: Aceitar licencas do Android SDK
