@@ -1,25 +1,46 @@
 name: Build APK
+
 on:
   push:
   workflow_dispatch:
+
 jobs:
   build:
     runs-on: ubuntu-latest
+
     steps:
-      - uses: actions/checkout@v4
-      - run: unzip -q DelAnholComandas-V4.zip
-      - uses: actions/setup-java@v4
-        with: { distribution: temurin, java-version: 17 }
-      - name: Aceitar licencas do Android SDK
+      - name: Baixar repositório
+        uses: actions/checkout@v4
+
+      - name: Extrair projeto V4
+        run: unzip -q DelAnholComandas-V4.zip
+
+      - name: Configurar Java
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: 17
+
+      - name: Aceitar licenças Android
         run: yes | $ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager --licenses || true
-      - uses: gradle/actions/setup-gradle@v4
-        with: { gradle-version: "8.9" }
-      - run: gradle assembleDebug --no-daemon
+
+      - name: Configurar Gradle
+        uses: gradle/actions/setup-gradle@v4
+        with:
+          gradle-version: "8.9"
+
+      - name: Compilar APK
         working-directory: DelAnholComandas
-      - run: gradle testDebugUnitTest --no-daemon
+        run: gradle assembleDebug --no-daemon
+
+      - name: Executar testes
         working-directory: DelAnholComandas
+        run: gradle testDebugUnitTest --no-daemon
         continue-on-error: true
-      - uses: actions/upload-artifact@v4
+
+      - name: Disponibilizar APK
+        uses: actions/upload-artifact@v4
         with:
           name: DelAnhol-Comandas-APK
           path: DelAnholComandas/app/build/outputs/apk/debug/app-debug.apk
+          
